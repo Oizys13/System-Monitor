@@ -1,6 +1,7 @@
 ###imports
 import os
 import sys
+import traceback
 from PyQt5.QtWidgets import QMainWindow, QApplication, QSizeGrip,QGraphicsDropShadowEffect, QTableWidgetItem
 from PyQt5.QtCore import *
 from PySide2 import QtCore, QtGui
@@ -25,6 +26,7 @@ class WorkerSignals(QObject):
     error =Signal(tuple)
     result = Signal(object)
     progress = Signal(int)
+    
 class Worker(QRunnable):
     def __init__(self, fn,*args, **kwargs):
         super(Worker, self).__init__()
@@ -41,7 +43,7 @@ class Worker(QRunnable):
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback, format_exc()))
+            self.signals.error.emit((exctype, value, traceback, traceback.format_exc()))
         else:
             self.signals.result.emit(result)
         finally:
